@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
+import { ulid } from 'ulid';
 import awsConfig from '../config/aws.config';
 
 @Injectable()
@@ -15,9 +16,11 @@ export class AwsService {
   }
 
   async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
+    const ulidFileName = `${ulid()}-${file.originalname}`;
+
     const params: AWS.S3.PutObjectRequest = {
       Bucket: awsConfig.bucketName,
-      Key: `${folder}/${file.originalname}`,
+      Key: `${folder}/${ulidFileName}`,
       Body: file.buffer,
       ACL: 'public-read',
     };
